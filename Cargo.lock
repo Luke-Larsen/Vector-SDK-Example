@@ -2365,12 +2365,14 @@ dependencies = [
  "nostr-sdk",
  "reqwest 0.11.27",
  "tokio",
- "vector_library",
+ "vector_sdk",
 ]
 
 [[package]]
-name = "vector_library"
+name = "vector_sdk"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e72a152b0680fc66551837074b59477a804bc2dfa37827bcc3919848e9c7d4f"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -2387,6 +2389,7 @@ dependencies = [
  "sha2",
  "thiserror 1.0.69",
  "tokio",
+ "url",
 ]
 
 [[package]]

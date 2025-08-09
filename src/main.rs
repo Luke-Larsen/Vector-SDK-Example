@@ -1,4 +1,4 @@
-use vector_library::VectorBot;
+use vector_sdk::VectorBot;
 use nostr_sdk::prelude::*;
 use std::error::Error;
 use reqwest::Client;
@@ -106,7 +106,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                             None => "png",
                                                                         };
 
-                                                                        let attached_file = vector_library::AttachmentFile {
+                                                                        let attached_file = vector_sdk::AttachmentFile {
                                                                             bytes,
                                                                             img_meta: None,
                                                                             extension: extension.to_string(),

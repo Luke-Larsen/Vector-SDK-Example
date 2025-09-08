@@ -2,7 +2,7 @@ use vector_sdk::VectorBot;
 use nostr_sdk::prelude::*;
 use std::error::Error;
 use reqwest::Client;
-
+use log::{error};
 /// Main function to demonstrate the usage of the VectorBot.
 ///
 /// This function sets up a VectorBot, sends a private message to a master chat,
@@ -120,6 +120,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                         println!("Sending Typing indicator: {:#?}", send_typing_indicator);
                                                                         let send_attatched = normal_chat.send_private_file(Some(attached_file)).await;
                                                                         println!("AttatchedMessageSend: {:#?}", send_attatched);
+                                                                        if !send_attatched{
+                                                                            error!("Error sending image {}", send_attatched)
+                                                                        }
                                                                         "Here is your cat image!".to_string()
                                                                     } else {
                                                                         "Failed to fetch cat image".to_string()

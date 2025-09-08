@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-vector_sdk = "0.1.0"  # Using the vector_sdk crate from crates.io
+vector_sdk = { path = "VectorSDK" }
 nostr-sdk = { version = "0.42.0", features = ["nip04", "nip06", "nip44", "nip59", "nip96"] }
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.11", features = ["json"] }

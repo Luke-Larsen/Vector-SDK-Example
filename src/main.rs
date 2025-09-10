@@ -43,7 +43,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 if event.kind == Kind::GiftWrap {
                     match bot_clone.client.unwrap_gift_wrap(&event).await {
                         Ok(UnwrappedGift { rumor, sender }) => {
-                            println!("{:#?}", rumor);
                             if rumor.kind == Kind::PrivateDirectMessage {
                                 let content: String = match rumor.content.trim().to_lowercase().as_str() {
                                     "/rand" => rand::random::<u16>().to_string(),
@@ -118,19 +117,22 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                         println!("chat channel created");
 
                                                                         // Send a reaction to validate we got the command
-                                                                        println!("Rumor id: {:#?}", rumor.id.unwrap().to_string());
-                                                                        println!("Emoji: {:#?}", "🆗".to_string());
                                                                         let send_checkmark = normal_chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
                                                                         println!("Sending reaction: {:#?}", send_checkmark);
 
                                                                         // Send a typing indicator because it might take a minute
                                                                         let send_typing_indicator = normal_chat.send_typing_indicator().await;
                                                                         println!("Sending Typing indicator: {:#?}", send_typing_indicator);
+
+                                                                        // Send the image
                                                                         let send_attatched = normal_chat.send_private_file(Some(attached_file)).await;
                                                                         println!("AttatchedMessageSend: {:#?}", send_attatched);
+
                                                                         if !send_attatched{
                                                                             error!("Error sending image {}", send_attatched)
                                                                         }
+                                                                        
+                                                                        // Return the string that will be sent to the user as normal private message
                                                                         "Here is your cat image!".to_string()
                                                                     } else {
                                                                         "Failed to fetch cat image".to_string()

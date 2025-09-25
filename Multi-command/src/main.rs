@@ -2,7 +2,7 @@ use vector_sdk::VectorBot;
 use nostr_sdk::prelude::*;
 use std::error::Error;
 use reqwest::Client;
-
+use log::{error};
 /// Main function to demonstrate the usage of the VectorBot.
 ///
 /// This function sets up a VectorBot, sends a private message to a master chat,
@@ -14,7 +14,7 @@ use reqwest::Client;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // A master npub for communicating in case of issues
-    let master_npub = PublicKey::from_bech32("npub18mqgner0a55ll542h5ysrgy9qsyvlv4g994rk8d8f3lt8e9ayltqclw0ja")?;
+    let master_npub = PublicKey::from_bech32("npub1v7h6x5h9k6yrn3azhrwzukrjlmkj8qe5xx5fl9as5uwukpjqwcvqk4lys8")?;
 
     // Generate new random keys
     let keys = Keys::generate();
@@ -115,8 +115,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                         // Send the image file
                                                                         let normal_chat = bot_clone.get_chat(sender).await;
                                                                         println!("chat channel created");
+
+                                                                        // Send a reaction to validate we got the command
+                                                                        let send_checkmark = normal_chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
+                                                                        println!("Sending reaction: {:#?}", send_checkmark);
+
+                                                                        // Send a typing indicator because it might take a minute
+                                                                        let send_typing_indicator = normal_chat.send_typing_indicator().await;
+                                                                        println!("Sending Typing indicator: {:#?}", send_typing_indicator);
+
+                                                                        // Send the image
                                                                         let send_attatched = normal_chat.send_private_file(Some(attached_file)).await;
                                                                         println!("AttatchedMessageSend: {:#?}", send_attatched);
+
+                                                                        if !send_attatched{
+                                                                            error!("Error sending image {}", send_attatched)
+                                                                        }
+                                                                        
+                                                                        // Return the string that will be sent to the user as normal private message
                                                                         "Here is your cat image!".to_string()
                                                                     } else {
                                                                         "Failed to fetch cat image".to_string()

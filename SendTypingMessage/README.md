@@ -1,0 +1,1 @@
+This is the most basic example of using the vector_sdk. It is just a bot that responds to all messages with "Hello World"

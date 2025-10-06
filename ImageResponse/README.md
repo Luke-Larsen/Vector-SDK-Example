@@ -1,0 +1,1 @@
+This bot will respond to any message with an image provided by catass. This shows how to send images and use api's with the vector

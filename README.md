@@ -33,7 +33,7 @@ This repository contains various examples demonstrating how to use the Vector SD
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
   - `src/main.rs`: Contains the main application code for executing multiple commands.
-  - `VectorSDK/`: A submodule containing the Vector SDK source code.
+  - `VectorSDK/`: A submodule containing the Vector SDK source code. Generally because this repo tends to be bleeding edge. This might not work with the standard cargo import
     - `Cargo.toml`: Defines the SDK dependencies.
     - `src/`: Contains the SDK source files.
 

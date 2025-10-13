@@ -2215,9 +2215,9 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
 
 [[package]]
 name = "vector_sdk"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8643524ef738a75c317e3de8953d4c23d26ddaa922205bd59a7519319364ccab"
+checksum = "3bf16cec7da785b1f3514ee5145da29dc4197c08d3d8c50637a1b5f0c8eedce6"
 dependencies = [
  "aes",
  "aes-gcm",

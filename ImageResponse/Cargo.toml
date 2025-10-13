@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-vector_sdk = "0.2.0"
+vector_sdk = "0.2.1"
 tokio = { version = "1", features = ["full"] }
 serde_json = "1.0.145"
 reqwest = "0.12.23"

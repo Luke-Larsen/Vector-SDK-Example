@@ -1,7 +1,7 @@
-# Vector Bot: Nostr SDK Explorer
+# Vector Bot: Multi-command
 
 ## Overview
-The Vector Bot project is designed to explore and showcase various features of the Vector SDK in conjunction with the Nostr protocol. This bot demonstrates how to create a functional bot that can interact with the Nostr network, send and receive messages, and perform various tasks using the Vector SDK.
+This bot combines most of what is currently available into one bot to give a good showcase of what is possible on a basic level.
 
 ## Features
 - Nostr integration for decentralized messaging
@@ -9,6 +9,8 @@ The Vector Bot project is designed to explore and showcase various features of t
 - Secure handling of private messages
 - Ability to fetch and display data from external APIs
 - Image handling and sharing
+- Sending reactions
+- Sending Typing Indicator
 
 ## Requirements
 - Rust toolchain (stable version)
@@ -17,7 +19,6 @@ The Vector Bot project is designed to explore and showcase various features of t
 ## Dependencies
 The project uses the following main dependencies:
 - [vector_sdk](https://github.com/vector-sdk/rust): The core SDK for Vector bot functionality
-- [nostr-sdk](https://github.com/nostr-protocol/nostr): SDK for Nostr protocol integration
 - [tokio](https://tokio.rs/): Asynchronous runtime for Rust
 - [reqwest](https://docs.rs/reqwest/latest/reqwest/): HTTP client for making API requests
 
@@ -36,7 +37,7 @@ The project uses the following main dependencies:
    ```
 
 ### Configuration
-Before running the bot, make sure to configure any necessary environment variables or settings. This may include setting up Nostr relay URLs or API keys for external services.
+Before running the bot, make sure to configure any necessary environment variables or settings. Such as setting a permanent npriv, and changing the master npub
 
 ### Running the Bot
 To start the bot, use the following command:
@@ -63,6 +64,5 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
-- Vector SDK team
 - Nostr protocol developers
 - Rust community

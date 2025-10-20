@@ -1,5 +1,7 @@
 use vector_sdk::VectorBot;
-use nostr_sdk::prelude::*;
+use vector_sdk::nostr::{
+    Keys, Kind, UnwrappedGift, RelayPoolNotification, ToBech32, PublicKey, FromBech32
+};
 use std::error::Error;
 use reqwest::Client;
 use log::{error};

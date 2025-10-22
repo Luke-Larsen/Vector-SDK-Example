@@ -2,7 +2,6 @@ use vector_sdk::nostr::{
     Keys, Kind, UnwrappedGift, RelayPoolNotification, ToBech32
 };
 
-// Vector SDK
 use vector_sdk::{VectorBot};
 use std::error::Error;
 
@@ -24,7 +23,8 @@ async fn main() -> Result<(), Box<dyn Error>>{
     // Create a new VectorBot with default metadata
     let bot = VectorBot::quick(keys).await;
 
-    bot.client.handle_notifications(|notification| {
+    // Handle notifications and properly handle the Result
+    let notifications_result = bot.client.handle_notifications(|notification| {
         let bot_clone = bot.clone();
         async move {
             if let RelayPoolNotification::Event { event, .. } = notification {
@@ -71,29 +71,29 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                                                 println!("chat channel created");
 
                                                                 // Send the image
-                                                                let send_attatched = normal_chat.send_private_file(Some(attached_file)).await;
-                                                                println!("AttatchedMessageSend: {:#?}", send_attatched);
+                                                                let send_attached = normal_chat.send_private_file(Some(attached_file)).await;
+                                                                println!("AttachedMessageSend: {:#?}", send_attached);
 
-                                                                if !send_attatched{
-                                                                    println!("Error sending image {}", send_attatched)
+                                                                if !send_attached{
+                                                                    println!("Error sending image {}", send_attached)
                                                                 }
-                                                                
+
                                                                 // Return the string that will be sent to the user as normal private message
-                                                                 println!("Here is your cat image!");
+                                                                println!("Here is your cat image!");
                                                             } else {
-                                                                 println!("Failed to fetch cat image");
+                                                                println!("Failed to fetch cat image");
                                                             }
                                                         }
                                                         Err(_) => println!("Error fetching cat image"),
                                                     }
                                                 } else {
-                                                     println!("Invalid cat image response")
+                                                    println!("Invalid cat image response")
                                                 }
                                             } else {
-                                                 println!("Failed to parse cat image response")
+                                                println!("Failed to parse cat image response")
                                             }
                                         } else {
-                                             println!("Failed to fetch cat image metadata")
+                                            println!("Failed to fetch cat image metadata")
                                         }
                                     }
                                     Err(_) => println!("Error fetching cat image"),
@@ -104,9 +104,12 @@ async fn main() -> Result<(), Box<dyn Error>>{
                     }
                 }
             }
-        Ok(false) // Set to true to exit from the loop
+            Ok(false) // Set to true to exit from the loop
         }
     }).await;
 
-     Ok(())
+    // Handle the Result from handle_notifications
+    notifications_result?;
+
+    Ok(())
 }

@@ -2,13 +2,11 @@ use vector_sdk::nostr::{
     Keys, Kind, UnwrappedGift, RelayPoolNotification, ToBech32
 };
 
-// Vector SDK
 use vector_sdk::{VectorBot};
 use std::error::Error;
 
-
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>>{
+async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     let keys = Keys::generate();
@@ -22,31 +20,36 @@ async fn main() -> Result<(), Box<dyn Error>>{
     // Create a new VectorBot with default metadata
     let bot = VectorBot::quick(keys).await;
 
-    bot.client.handle_notifications(|notification| {
+    let _ = bot.client.handle_notifications(|notification| {
         let bot_clone = bot.clone();
         async move {
             if let RelayPoolNotification::Event { event, .. } = notification {
-                if event.kind == Kind::GiftWrap {
-                    match bot_clone.client.unwrap_gift_wrap(&event).await {
-                        Ok(UnwrappedGift { rumor, sender }) => {
-                            if rumor.kind == Kind::PrivateDirectMessage {
-                                println!("Received message: {:?}", rumor.content.trim());
+                match bot_clone.client.unwrap_gift_wrap(&event).await {
+                    Ok(UnwrappedGift { rumor, sender }) => {
+                        if rumor.kind == Kind::PrivateDirectMessage {
+                            println!("Received message: {:?}", rumor.content.trim());
 
-                                // Get the chat channel for the sender
-                                let chat = bot_clone.get_chat(sender).await;
+                            // Get the chat channel for the sender
+                            let chat = bot_clone.get_chat(sender).await;
 
-                                // Send a reaction to validate we got the command
-                                let send_checkmark = chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
-                                println!("Sending reaction: {:#?}", send_checkmark);
-                            }
+                            // Send a reaction to validate we got the command
+                            let send_checkmark = chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
+                            println!("Sending reaction: {:#?}", send_checkmark);
+                            Ok(false) // Return result here to handle it properly
+                        } else {
+                            Ok(false) // Default to false if not a direct message
                         }
-                        Err(e) => println!("Impossible to decrypt direct message: {e}"),
+                    }
+                    Err(e) => {
+                        println!("Impossible to decrypt direct message: {e}");
+                        Ok(false)
                     }
                 }
+            } else {
+                Ok(false)
             }
-        Ok(false) // Set to true to exit from the loop
         }
     }).await;
 
-     Ok(())
+    Ok(())
 }

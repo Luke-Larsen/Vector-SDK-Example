@@ -25,7 +25,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
     // Create a new VectorBot with default metadata
     let bot = VectorBot::quick(keys).await;
 
-    bot.client.handle_notifications(|notification| {
+    let _ = bot.client.handle_notifications(|notification| {
         let bot_clone = bot.clone();
         async move {
             if let RelayPoolNotification::Event { event, .. } = notification {
@@ -43,7 +43,6 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                 println!("Sending Typing indicator: {:#?}", send_typing_indicator);
 
                                 let ten_millis = time::Duration::from_millis(10000);
-                                let now = time::Instant::now();
 
                                 thread::sleep(ten_millis);
 

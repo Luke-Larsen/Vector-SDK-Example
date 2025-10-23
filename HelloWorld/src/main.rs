@@ -22,7 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
     // Create a new VectorBot with default metadata
     let bot = VectorBot::quick(keys).await;
 
-    bot.client.handle_notifications(|notification| {
+    let _ = bot.client.handle_notifications(|notification| {
         let bot_clone = bot.clone();
         async move {
             if let RelayPoolNotification::Event { event, .. } = notification {

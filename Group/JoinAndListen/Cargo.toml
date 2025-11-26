@@ -1,0 +1,8 @@
+[package]
+name = "JoinAndListen_bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+vector_sdk = { path = "Vector-SDK" }
+tokio = { version = "1", features = ["full"] }

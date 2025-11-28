@@ -11,8 +11,8 @@ use std::error::Error;
 async fn main() -> Result<(), Box<dyn Error>>{
 
     // Generate new random keys
-     let keys = Keys::generate();
-    //let keys = Keys::parse("nsec12kcgs78l06p30jz7z7h3n2x2cy99nw2z6zspjdp7qc206887mwvs95lnkx")?;
+    //let keys = Keys::generate();
+    let keys = Keys::parse("nsec1n5vmml3eh4rqz9z6qzyekm3eml5w63qn0kerdfs0hq6tfj6tueysp96vrm")?;
 
     println!("Vector bot initialized with public key: {:?}", keys.public_key());
     let bech32_pubkey: String = keys.public_key().to_bech32()?;
@@ -73,6 +73,11 @@ async fn main() -> Result<(), Box<dyn Error>>{
 
                         }
                         Err(e) => println!("Impossible to decrypt direct message: {e}"),
+                    }
+                } else if event.kind == Kind::MlsGroupMessage {
+                    println!("We got a group message!");
+                    // Process group message here
+
                     }
                 }
             }

@@ -57,7 +57,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                 
 
                                 // First we get our group
-                                let group = bot_clone.join_group(rumor).await;
+                                let group = bot_clone.quick_join_group(rumor).await;
 
                                 let _ = tokio::time::sleep(tokio::time::Duration::from_millis(10000)).await;
 

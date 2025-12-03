@@ -79,16 +79,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
                     let group_message = bot_clone.process_group_message(&event).await;
 
                     println!("{:#?}", group_message);
-                    // Check what "Kind" of message we got
-                   
-                    // if group_message.kind == Kind::ApplicationSpecificData {
-                    //     println!("ApplicationSpecificData");
-                    //     if group_message.content == "typing" {
-                    //         println!("typing data");
-                    //     }
-                    // }else{
-                    //     println!("Not filter for Kind");
-                    // }
+
                     match group_message.kind{
                         Kind::ApplicationSpecificData => {
                             if group_message.content == "typing" {

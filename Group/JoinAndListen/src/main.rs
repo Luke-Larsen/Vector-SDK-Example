@@ -53,15 +53,18 @@ async fn main() -> Result<(), Box<dyn Error>>{
 
                                 println!("Welcome Event Nostr Id: {:#?}", rumor.id);
 
-                                // TODO: Set up checkout_group so that a bot can validate things before joining
-                                
-
                                 // First we get our group
-                                //let group = bot_clone.quick_join_group(rumor).await;
+                                let group = match bot_clone.quick_join_group(rumor).await{
+                                    Ok(g) => g,
+                                    Err(_) => panic!("Could not join group")
+                                };
 
-                                let group = bot_clone.checkout_group(rumor);
 
-                                let join = bot_clone.join_group(group.mls_group_id);
+                                // TODO: Set up checkout_group so that a bot can validate things before joining
+                                // let group = bot_clone.checkout_group(rumor);
+                                // println!("Group data: {:#?}", group);
+
+                                // let join = bot_clone.join_group(group.mls_group_id);
 
                                 let _ = tokio::time::sleep(tokio::time::Duration::from_millis(10000)).await;
 
@@ -80,7 +83,10 @@ async fn main() -> Result<(), Box<dyn Error>>{
                 } else if event.kind == Kind::MlsGroupMessage {
                     println!("We got a group message! {:#?}",event);
                     // Process group message here
-                    let group_message = bot_clone.process_group_message(&event).await;
+                    let group_message = match bot_clone.process_group_message(&event).await{
+                        Ok(g) => g,
+                        Err(_) => panic!("Could not join group")
+                    };
 
                     println!("{:#?}", group_message);
 
@@ -95,14 +101,20 @@ async fn main() -> Result<(), Box<dyn Error>>{
                             match group_message.content.trim().to_lowercase().as_str() {
 
                                 "/help" =>{
-                                    let group = bot_clone.get_group(group_message.mls_group_id).await;
+                                    let group = match bot_clone.get_group(group_message.mls_group_id).await{
+                                        Ok(g) => g,
+                                        Err(_) => panic!("Could not join group")
+                                    };
                                     // Lets send a message to our newly joined group
                                     let message_result = group.send_group_message("I will not help you").await;
 
                                     println!("Our message result: {:#?}", message_result);
                                 },
                                 _ =>{
-                                    let group = bot_clone.get_group(group_message.mls_group_id).await;
+                                    let group = match bot_clone.get_group(group_message.mls_group_id).await{
+                                        Ok(g) => g,
+                                        Err(_) => panic!("Could not join group")
+                                    };
                                     // Lets send a message to our newly joined group
                                     let message_result = group.send_group_message("Not a command").await;
 

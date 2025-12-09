@@ -6,6 +6,8 @@ use vector_sdk::nostr::{
 use vector_sdk::{VectorBot};
 use std::error::Error;
 
+use reqwest::Client;
+
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>>{
@@ -109,6 +111,77 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                     let message_result = group.send_group_message("I will not help you").await;
 
                                     println!("Our message result: {:#?}", message_result);
+                                },
+                                "/cat" => {
+                                    // Fetch the cat image from the URL
+                                    let cat_url = "https://cataas.com/cat?json=true";
+                                    let r_client = Client::new();
+
+                                    match r_client.get(cat_url).send().await {
+                                        Ok(response) => {
+                                            if response.status().is_success() {
+                                                // Parse the JSON response to get the image URL
+                                                if let Ok(json) = response.json::<serde_json::Value>().await {
+                                                    if let Some(image_url) = json.get("url").and_then(|url| url.as_str()) {
+                                                        // Fetch the actual image
+                                                        let image_response = r_client.get(image_url).send().await;
+
+                                                        match image_response {
+                                                            Ok(img_response) => {
+                                                                if img_response.status().is_success() {
+                                                                    // Create an AttachmentFile with the image data
+                                                                    let bytes = img_response.bytes().await.unwrap().to_vec();
+                                                                    let extension = match json.get("mimetype").and_then(|mimetype| mimetype.as_str()) {
+                                                                        Some("image/png") => "png",
+                                                                        Some("image/jpeg") => "jpg",
+                                                                        Some("image/gif") => "gif",
+                                                                        Some("image/webp") => "webp",
+                                                                        Some(_) => "png",
+                                                                        None => "png",
+                                                                    };
+
+                                                                    let attached_file = vector_sdk::AttachmentFile {
+                                                                        bytes,
+                                                                        img_meta: None,
+                                                                        extension: extension.to_string(),
+                                                                    };
+
+                                                                    // Send the image file
+                                                                    let group = match bot_clone.get_group(group_message.mls_group_id).await{
+                                                                        Ok(g) => g,
+                                                                        Err(_) => panic!("Could not join group")
+                                                                    };
+                                                                    println!("group channel grabbed");
+
+                                                                    // // Send a reaction to validate we got the command
+                                                                    // let send_checkmark = normal_chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
+                                                                    // println!("Sending reaction: {:#?}", send_checkmark);
+
+                                                                    // // Send a typing indicator because it might take a minute
+                                                                    // let send_typing_indicator = normal_chat.send_typing_indicator().await;
+                                                                    // println!("Sending Typing indicator: {:#?}", send_typing_indicator);
+
+                                                                    // Send the image
+                                                                    let send_attatched = group.send_group_attachment(Some(attached_file)).await;
+                                                                    println!("AttatchedMessageSend: {:#?}", send_attatched);
+                                                                } else {
+                                                                    panic!("Failed to fetch cat image")
+                                                                }
+                                                            }
+                                                            Err(_) => panic!("Error fetching cat image"),
+                                                        }
+                                                    } else {
+                                                        panic!("Invalid cat image response")
+                                                    }
+                                                } else {
+                                                    panic!("Failed to parse cat image response")
+                                                }
+                                            } else {
+                                                panic!("Failed to fetch cat image metadata")
+                                            }
+                                        }
+                                        Err(_) => panic!("Error fetching cat image"),
+                                    }
                                 },
                                 _ =>{
                                     let group = match bot_clone.get_group(group_message.mls_group_id).await{

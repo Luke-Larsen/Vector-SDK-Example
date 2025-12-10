@@ -69,6 +69,9 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                 // let join = bot_clone.join_group(group.mls_group_id);
 
                                 let _ = tokio::time::sleep(tokio::time::Duration::from_millis(10000)).await;
+                                
+                                // Send typing reaction
+                                let _ = group.send_group_typing_indication().await;
 
                                 // Lets send a message to our newly joined group
                                 let message_result = group.send_group_message("Hello World").await;

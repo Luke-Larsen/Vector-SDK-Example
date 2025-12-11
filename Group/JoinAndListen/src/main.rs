@@ -157,12 +157,12 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                                                     println!("group channel grabbed");
 
                                                                     // // Send a reaction to validate we got the command
-                                                                    // let send_checkmark = normal_chat.send_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
-                                                                    // println!("Sending reaction: {:#?}", send_checkmark);
+                                                                    let send_checkmark = group.send_group_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
+                                                                    println!("Sending reaction: {:#?}", send_checkmark);
 
                                                                     // // Send a typing indicator because it might take a minute
-                                                                    // let send_typing_indicator = normal_chat.send_typing_indicator().await;
-                                                                    // println!("Sending Typing indicator: {:#?}", send_typing_indicator);
+                                                                    let send_typing_indicator = group.send_group_typing_indicator().await;
+                                                                    println!("Sending Typing indicator: {:#?}", send_typing_indicator);
 
                                                                     // Send the image
                                                                     let send_attatched = group.send_group_attachment(Some(attached_file)).await;

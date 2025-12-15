@@ -1,26 +1,25 @@
-# Vector Bot: Multi-command
+# Multi-command Bot
 
 ## Overview
-This bot combines most of what is currently available into one bot to give a good showcase of what is possible on a basic level.
+This bot combines multiple features of the Vector SDK into a single bot. It demonstrates how to handle private direct messages, send reactions, typing indicators, and images. It also includes command-based interaction with users.
 
 ## Features
-- Nostr integration for decentralized messaging
-- Command-based interaction with users
-- Secure handling of private messages
-- Ability to fetch and display data from external APIs
-- Image handling and sharing
-- Sending reactions
-- Sending Typing Indicator
+- Handles private direct messages
+- Supports commands like `/rand`, `/help`, `/cat`, and `/pivx`
+- Sends reactions, typing indicators, and images
+- Fetches data from external APIs
 
 ## Requirements
 - Rust toolchain (stable version)
 - Cargo package manager
 
 ## Dependencies
-The project uses the following main dependencies:
-- [vector_sdk](https://github.com/vector-sdk/rust): The core SDK for Vector bot functionality
-- [tokio](https://tokio.rs/): Asynchronous runtime for Rust
-- [reqwest](https://docs.rs/reqwest/latest/reqwest/): HTTP client for making API requests
+- vector_sdk
+- tokio
+- reqwest
+- log
+- serde_json
+- rand
 
 ## Setup and Usage
 
@@ -37,7 +36,7 @@ The project uses the following main dependencies:
    ```
 
 ### Configuration
-Before running the bot, make sure to configure any necessary environment variables or settings. Such as setting a permanent npriv, and changing the master npub
+Before running the bot, make sure to configure any necessary environment variables or settings, such as setting a permanent npriv and changing the master npub.
 
 ### Running the Bot
 To start the bot, use the following command:

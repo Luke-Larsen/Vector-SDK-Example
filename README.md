@@ -8,22 +8,22 @@ This repository contains various examples demonstrating how to use the Vector SD
 - **Objective**: A simple "Hello World" example to demonstrate the basic setup and usage of the Vector SDK.
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code that prints "Hello World".
+  - `src/main.rs`: Contains the main application code that responds to private direct messages with "Hello World".
 
 ### [ImageResponse](ImageResponse/)
-- **Objective**: Demonstrates how to send an image response using the Vector SDK.
+- **Objective**: Demonstrates how to send image responses using the Vector SDK.
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
   - `src/main.rs`: Contains the main application code for sending image responses.
 
 ### [SendReactions](SendReactions/)
-- **Objective**: Demonstrates sending reactions using the Vector SDK.
+- **Objective**: Demonstrates sending reactions to messages using the Vector SDK.
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
   - `src/main.rs`: Contains the main application code for sending reactions.
 
 ### [SendTypingMessage](SendTypingMessage/)
-- **Objective**: Shows how to send a typing message indicator using the Vector SDK.
+- **Objective**: Shows how to send typing message indicators using the Vector SDK.
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
   - `src/main.rs`: Contains the main application code for sending typing message indicators.
@@ -33,10 +33,13 @@ This repository contains various examples demonstrating how to use the Vector SD
 - **Contents**:
   - `Cargo.toml`: Defines the project dependencies.
   - `src/main.rs`: Contains the main application code for executing multiple commands.
-  - `VectorSDK/`: A submodule containing the Vector SDK source code. Generally because this repo tends to be bleeding edge. This might not work with the standard cargo import
-    - `Cargo.toml`: Defines the SDK dependencies.
-    - `src/`: Contains the SDK source files.
 
+### [Group/JoinAndListen](Group/JoinAndListen/)
+- **Objective**: Demonstrates how to join and listen to MLS group conversations using the Vector SDK.
+- **Contents**:
+  - `Cargo.toml`: Defines the project dependencies.
+  - `src/main.rs`: Contains the main application code for joining and listening to group conversations.
+  - `Vector-SDK/`: A submodule containing the Vector SDK source code.
 
 ## Usage
 

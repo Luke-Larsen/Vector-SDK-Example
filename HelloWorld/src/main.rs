@@ -6,9 +6,18 @@ use vector_sdk::nostr::{
 use vector_sdk::{VectorBot};
 use std::error::Error;
 
-
+/**
+ * Main function to demonstrate the basic usage of the Vector SDK.
+ *
+ * This function sets up a VectorBot that responds to private direct messages
+ * with "Hello World".
+ *
+ * # Returns
+ *
+ * Result::Ok if the operation was successful, or Result::Err if an error occurred.
+ */
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>>{
+async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     let keys = Keys::generate();
@@ -48,9 +57,9 @@ async fn main() -> Result<(), Box<dyn Error>>{
                     }
                 }
             }
-        Ok(false) // Set to true to exit from the loop
+            Ok(false) // Set to true to exit from the loop
         }
     }).await;
 
-     Ok(())
+    Ok(())
 }

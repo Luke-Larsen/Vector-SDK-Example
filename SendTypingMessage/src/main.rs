@@ -9,9 +9,18 @@ use std::error::Error;
 // Thread, time for pausing response
 use std::{thread, time};
 
-
+/**
+ * Main function to demonstrate how to send typing indicators using the Vector SDK.
+ *
+ * This function sets up a VectorBot that responds to private direct messages
+ * by sending a typing indicator and then a "Hello World" message.
+ *
+ * # Returns
+ *
+ * Result::Ok if the operation was successful, or Result::Err if an error occurred.
+ */
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>>{
+async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     let keys = Keys::generate();
@@ -59,9 +68,9 @@ async fn main() -> Result<(), Box<dyn Error>>{
                     }
                 }
             }
-        Ok(false) // Set to true to exit from the loop
+            Ok(false) // Set to true to exit from the loop
         }
     }).await;
 
-     Ok(())
+    Ok(())
 }

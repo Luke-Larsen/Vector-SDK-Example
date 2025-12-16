@@ -8,8 +8,18 @@ use std::error::Error;
 // reqwest for connecting to catass
 use reqwest::Client;
 
+/**
+ * Main function to demonstrate how to send image responses using the Vector SDK.
+ *
+ * This function sets up a VectorBot that responds to private direct messages
+ * by fetching a cat image from an API and sending it as a response.
+ *
+ * # Returns
+ *
+ * Result::Ok if the operation was successful, or Result::Err if an error occurred.
+ */
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>>{
+async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     let keys = Keys::generate();

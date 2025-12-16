@@ -133,7 +133,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                         if !send_attatched{
                                                                             error!("Error sending image {}", send_attatched)
                                                                         }
-                                                                        
+
                                                                         // Return the string that will be sent to the user as normal private message
                                                                         "Here is your cat image!".to_string()
                                                                     } else {

@@ -5,6 +5,16 @@ use vector_sdk::nostr::{
 use vector_sdk::{VectorBot};
 use std::error::Error;
 
+/**
+ * Main function to demonstrate how to send reactions to messages using the Vector SDK.
+ *
+ * This function sets up a VectorBot that responds to private direct messages
+ * by sending a checkmark reaction.
+ *
+ * # Returns
+ *
+ * Result::Ok if the operation was successful, or Result::Err if an error occurred.
+ */
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 

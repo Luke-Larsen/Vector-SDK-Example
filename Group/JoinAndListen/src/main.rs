@@ -8,9 +8,19 @@ use std::error::Error;
 
 use reqwest::Client;
 
-
+/**
+ * Main function to demonstrate how to join and listen to MLS group conversations using the Vector SDK.
+ *
+ * This function sets up a VectorBot that handles private direct messages,
+ * joins and listens to MLS group conversations, and supports commands like
+ * "/help" and "/cat".
+ *
+ * # Returns
+ *
+ * Result::Ok if the operation was successful, or Result::Err if an error occurred.
+ */
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>>{
+async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     //let keys = Keys::generate();
@@ -61,7 +71,6 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                     Err(_) => panic!("Could not join group")
                                 };
 
-
                                 // TODO: Set up checkout_group so that a bot can validate things before joining
                                 // let group = bot_clone.checkout_group(rumor);
                                 // println!("Group data: {:#?}", group);
@@ -69,7 +78,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
                                 // let join = bot_clone.join_group(group.mls_group_id);
 
                                 let _ = tokio::time::sleep(tokio::time::Duration::from_millis(10000)).await;
-                                
+
                                 // Send typing reaction
                                 let _ = group.send_group_typing_indication().await;
 
@@ -202,10 +211,10 @@ async fn main() -> Result<(), Box<dyn Error>>{
                             println!("Not filter for Kind");
                         }
                     }
-                        
+
                 }
             }
-            
+
         Ok(false) // Set to true to exit from the loop
         }
     }).await;

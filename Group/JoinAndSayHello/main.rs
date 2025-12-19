@@ -12,6 +12,7 @@ async fn main() -> Result<(), Box<dyn Error>>{
 
     // Generate new random keys
     //let keys = Keys::generate();
+    // Or use a set key
     let keys = Keys::parse("nsec1n5vmml3eh4rqz9z6qzyekm3eml5w63qn0kerdfs0hq6tfj6tueysp96vrm")?;
 
     println!("Vector bot initialized with public key: {:?}", keys.public_key());

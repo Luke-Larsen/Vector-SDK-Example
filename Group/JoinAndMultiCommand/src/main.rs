@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Generate new random keys
     //let keys = Keys::generate();
-    let keys = Keys::parse("nsec1n5vmml3eh4rqz9z6qzyekm3eml5w63qn0kerdfs0hq6tfj6tueysp96vrm")?;
+    let keys = Keys::parse("nsec10laerhfmk8lsl9z8q2et4sw8c9sjwtp2y62w60cl4f4qhu62d4kqjsk5fd")?;
 
     println!("Vector bot initialized with public key: {:?}", keys.public_key());
     let bech32_pubkey: String = keys.public_key().to_bech32()?;
@@ -52,21 +52,21 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                 println!("Welcome Event Nostr Id: {:#?}", rumor.id);
 
                                 // First we get our group
-                                // let group = match bot_clone.quick_join_group(rumor).await{
-                                //     Ok(g) => g,
-                                //     Err(_) => panic!("Could not join group")
-                                // };
+                                let group = match bot_clone.quick_join_group(rumor).await{
+                                    Ok(g) => g,
+                                    Err(_) => panic!("Could not join group")
+                                };
 
                                 // TODO: Set up checkout_group so that a bot can validate things before joining
-                                let group = bot_clone.checkout_group(rumor);
+                                // let group = bot_clone.checkout_group(rumor);
                                 // println!("Group data: {:#?}", group);
 
-                                 let join = bot_clone.join_group(group.mls_group_id);
+                                //  let join = bot_clone.join_group(group.mls_group_id);
 
                                 let _ = tokio::time::sleep(tokio::time::Duration::from_millis(10000)).await;
 
                                 // Send typing reaction
-                                let _ = group.send_group_typing_indication().await;
+                                let _ = group.send_group_typing_indicator().await;
 
                                 // Lets send a message to our newly joined group
                                 let message_result = group.send_group_message("Hello World").await;
@@ -85,7 +85,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     // Process group message here
                     let group_message = match bot_clone.process_group_message(&event).await{
                         Ok(g) => g,
-                        Err(_) => panic!("Could not join group")
+                        Err(e) => panic!("Panic processing group message: {:#?}", e)
                     };
 
                     println!("{:#?}", group_message);
@@ -103,7 +103,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                 "/help" =>{
                                     let group = match bot_clone.get_group(group_message.mls_group_id).await{
                                         Ok(g) => g,
-                                        Err(_) => panic!("Could not join group")
+                                        Err(e) => panic!("Panic at finding group message: {:#?}", e)
                                     };
                                     // Lets send a message to our newly joined group
                                     let message_result = group.send_group_message("I will not help you").await;
@@ -114,6 +114,22 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                     // Fetch the cat image from the URL
                                     let cat_url = "https://cataas.com/cat?json=true";
                                     let r_client = Client::new();
+
+                                    // Get the message so we know which group and the message details
+                                    let group = match bot_clone.get_group(group_message.mls_group_id).await{
+                                        Ok(g) => g,
+                                        Err(_) => panic!("Could not open the message from a group")
+                                    };
+                                    println!("group channel grabbed");
+
+
+                                    // // Send a reaction to validate we got the command
+                                    // let send_checkmark = group.send_group_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
+                                    // println!("Sending reaction: {:#?}", send_checkmark);
+
+                                    // Send a typing indicator because it might take a minute
+                                    let send_typing_indicator = group.send_group_typing_indicator().await;
+                                    println!("Sending Typing indicator: {:#?}", send_typing_indicator);
 
                                     match r_client.get(cat_url).send().await {
                                         Ok(response) => {
@@ -144,24 +160,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                                                         extension: extension.to_string(),
                                                                     };
 
-                                                                    // Send the image file
-                                                                    let group = match bot_clone.get_group(group_message.mls_group_id).await{
-                                                                        Ok(g) => g,
-                                                                        Err(_) => panic!("Could not join group")
-                                                                    };
-                                                                    println!("group channel grabbed");
 
-                                                                    // // // Send a reaction to validate we got the command
-                                                                    // let send_checkmark = group.send_group_reaction(rumor.id.unwrap().to_string(), "🆗".to_string()).await;
-                                                                    // println!("Sending reaction: {:#?}", send_checkmark);
 
-                                                                    // // // Send a typing indicator because it might take a minute
-                                                                    // let send_typing_indicator = group.send_group_typing_indicator().await;
-                                                                    // println!("Sending Typing indicator: {:#?}", send_typing_indicator);
-
-                                                                    // // Send the image
-                                                                    // let send_attatched = group.send_group_attachment(Some(attached_file)).await;
-                                                                    // println!("AttatchedMessageSend: {:#?}", send_attatched);
+                                                                    // Send the image
+                                                                    let send_attatched = group.send_group_attachment(Some(attached_file)).await;
+                                                                    println!("AttatchedMessageSend: {:#?}", send_attatched);
                                                                 } else {
                                                                     panic!("Failed to fetch cat image")
                                                                 }

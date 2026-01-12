@@ -1,0 +1,13 @@
+[package]
+name = "JoinAndSayHello_bot"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "JoinAndSayHello_bot"
+path = "main.rs"
+
+[dependencies]
+vector_sdk = { path = "../JoinAndMultiCommand/Vector-SDK" }
+tokio = { version = "1", features = ["full"] }
+dotenv = "0.15"

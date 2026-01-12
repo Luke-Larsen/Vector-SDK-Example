@@ -5,15 +5,24 @@ use vector_sdk::nostr::{
 // Vector SDK
 use vector_sdk::{VectorBot};
 use std::error::Error;
-
+use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>>{
 
-    // Generate new random keys
-    //let keys = Keys::generate();
-    // Or use a set key
-    let keys = Keys::parse("nsec1n5vmml3eh4rqz9z6qzyekm3eml5w63qn0kerdfs0hq6tfj6tueysp96vrm")?;
+    // Load environment variables from .env file
+    dotenv::dotenv().ok();
+
+    // Read private key from environment variable
+    let private_key = env::var("VECTOR_PRIVATE_KEY")
+        .expect("VECTOR_PRIVATE_KEY environment variable not set");
+
+    // Generate new random keys or use the provided key
+    let keys = if private_key == "generate" {
+        Keys::generate()
+    } else {
+        Keys::parse(&private_key)?
+    };
 
     println!("Vector bot initialized with public key: {:?}", keys.public_key());
     let bech32_pubkey: String = keys.public_key().to_bech32()?;
@@ -87,10 +96,10 @@ async fn main() -> Result<(), Box<dyn Error>>{
                             println!("No current filter for Kind");
                         }
                     }
-                        
+
                 }
             }
-            
+
         Ok(false) // Set to true to exit from the loop
         }
     }).await;

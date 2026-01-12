@@ -7,13 +7,24 @@ use vector_sdk::{VectorBot};
 use std::error::Error;
 
 use reqwest::Client;
+use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 
-    // Generate new random keys
-    //let keys = Keys::generate();
-    let keys = Keys::parse("nsec10laerhfmk8lsl9z8q2et4sw8c9sjwtp2y62w60cl4f4qhu62d4kqjsk5fd")?;
+    // Load environment variables from .env file
+    dotenv::dotenv().ok();
+
+    // Read private key from environment variable
+    let private_key = env::var("VECTOR_PRIVATE_KEY")
+        .expect("VECTOR_PRIVATE_KEY environment variable not set");
+
+    // Generate new random keys or use the provided key
+    let keys = if private_key == "generate" {
+        Keys::generate()
+    } else {
+        Keys::parse(&private_key)?
+    };
 
     println!("Vector bot initialized with public key: {:?}", keys.public_key());
     let bech32_pubkey: String = keys.public_key().to_bech32()?;

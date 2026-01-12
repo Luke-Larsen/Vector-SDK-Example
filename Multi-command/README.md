@@ -23,26 +23,26 @@ This bot combines multiple features of the Vector SDK into a single bot. It demo
 
 ## Setup and Usage
 
-### Installation
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/vector-bot.git
-   cd vector-bot
-   ```
-
-2. Build the project:
-   ```
-   cargo build --release
-   ```
-
-### Configuration
-Before running the bot, make sure to configure any necessary environment variables or settings, such as setting a permanent npriv and changing the master npub.
-
 ### Running the Bot
-To start the bot, use the following command:
+To start the bot, navigate to the project directory and run:
+
+```sh
+cd Multi-command
+cargo run
 ```
+
+For release builds:
+
+```sh
+cargo build --release
 cargo run --release
 ```
+
+### Configuration
+The bot uses a hardcoded private key for demonstration purposes. In production, you should:
+1. Generate your own keys using `Keys::generate()`
+2. Store the private key securely
+3. Use environment variables or configuration files for sensitive data
 
 ## Commands
 The bot supports several commands that can be sent as private messages:

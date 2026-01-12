@@ -16,21 +16,18 @@ This bot demonstrates how to send reactions to messages using the Vector SDK. It
 
 ## Setup and Usage
 
-### Installation
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/vector-bot.git
-   cd vector-bot
-   ```
-
-2. Build the project:
-   ```
-   cargo build --release
-   ```
-
 ### Running the Bot
-To start the bot, use the following command:
+To start the bot, navigate to the project directory and run:
+
+```sh
+cd SendReactions
+cargo run
 ```
+
+For release builds:
+
+```sh
+cargo build --release
 cargo run --release
 ```
 

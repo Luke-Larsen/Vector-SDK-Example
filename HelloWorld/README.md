@@ -16,21 +16,18 @@ This is the most basic example of using the vector_sdk. It is just a bot that re
 
 ## Setup and Usage
 
-### Installation
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/vector-bot.git
-   cd vector-bot
-   ```
-
-2. Build the project:
-   ```
-   cargo build --release
-   ```
-
 ### Running the Bot
-To start the bot, use the following command:
+To start the bot, navigate to the project directory and run:
+
+```sh
+cd HelloWorld
+cargo run
 ```
+
+For release builds:
+
+```sh
+cargo build --release
 cargo run --release
 ```
 

@@ -5,49 +5,58 @@ This repository contains various examples demonstrating how to use the Vector SD
 ## Projects Overview
 
 ### [HelloWorld](HelloWorld/)
-- **Objective**: A simple "Hello World" example to demonstrate the basic setup and usage of the Vector SDK.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code that responds to private direct messages with "Hello World".
+A simple "Hello World" example demonstrating basic setup and usage of the Vector SDK.
+- Responds to private direct messages with "Hello World"
+- **Files**: `Cargo.toml`, `src/main.rs`
 
 ### [ImageResponse](ImageResponse/)
-- **Objective**: Demonstrates how to send image responses using the Vector SDK.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code for sending image responses.
+Demonstrates how to send image responses using the Vector SDK.
+- Responds to private messages with cat images from an external API
+- **Files**: `Cargo.toml`, `src/main.rs`
 
 ### [SendReactions](SendReactions/)
-- **Objective**: Demonstrates sending reactions to messages using the Vector SDK.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code for sending reactions.
+Demonstrates sending reactions to messages using the Vector SDK.
+- Responds to private messages with checkmark reactions
+- **Files**: `Cargo.toml`, `src/main.rs`
 
 ### [SendTypingMessage](SendTypingMessage/)
-- **Objective**: Shows how to send typing message indicators using the Vector SDK.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code for sending typing message indicators.
+Shows how to send typing message indicators using the Vector SDK.
+- Sends typing indicators before responding with "Hello World"
+- **Files**: `Cargo.toml`, `src/main.rs`
 
 ### [Multi-command](Multi-command/)
-- **Objective**: Shows how to execute multiple commands using the Vector SDK, and combines knowledge from previous examples.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code for executing multiple commands.
+Combines multiple Vector SDK features into a single bot.
+- Handles private messages and supports commands: `/rand`, `/help`, `/cat`, `/pivx`
+- Demonstrates reactions, typing indicators, images, and API integration
+- **Files**: `Cargo.toml`, `src/main.rs`
 
-### [Group/JoinAndListen](Group/JoinAndListen/)
-- **Objective**: Demonstrates how to join and listen to MLS group conversations using the Vector SDK.
-- **Contents**:
-  - `Cargo.toml`: Defines the project dependencies.
-  - `src/main.rs`: Contains the main application code for joining and listening to group conversations.
-  - `Vector-SDK/`: A submodule containing the Vector SDK source code.
+### [Group/JoinAndSayHello](Group/JoinAndSayHello/)
+Demonstrates joining and participating in MLS (Messaging Layer Security) group conversations.
+- Handles private direct messages and group messages
+- Automatically responds with "Hello World" to private messages and group messages
+- **Files**: `main.rs`
+
+### [Group/JoinAndMultiCommand](Group/JoinAndMultiCommand/)
+Advanced MLS group bot with multiple command support.
+- Joins and listens to MLS group conversations
+- Supports commands: `/help`, `/cat`
+- Demonstrates reactions, typing indicators, and images in group chats
+- **Files**: `Cargo.toml`, `src/main.rs`, `Vector-SDK/` (local SDK version)
 
 ## Usage
 
-Each project can be built and run independently. Navigate to the project directory and use Cargo to build and run the project:
+Each project can be built and run independently. Navigate to the project directory and run:
 
 ```sh
 cd <project-directory>
 cargo run
+```
+
+For release builds:
+
+```sh
+cargo build --release
+cargo run --release
 ```
 
 ## Contributing

@@ -1,3 +1,4 @@
 target/
 Vector-SDK/
 mls/
+.env

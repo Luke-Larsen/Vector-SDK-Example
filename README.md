@@ -43,6 +43,24 @@ Advanced MLS group bot with multiple command support.
 - Demonstrates reactions, typing indicators, and images in group chats
 - **Files**: `Cargo.toml`, `src/main.rs`, `Vector-SDK/` (local SDK version)
 
+### [ScheduledMessages](ScheduledMessages/)
+Demonstrates time-based message scheduling and background task management.
+- Schedule one-time messages to be sent at specific times
+- Schedule daily or weekly recurring messages
+- List and cancel scheduled messages
+- Demonstrates background task processing with Tokio
+- **Files**: `Cargo.toml`, `src/main.rs`
+- **Commands**: `/schedule`, `/list`, `/cancel`, `/help`
+
+### [PersistenceBot](PersistenceBot/)
+Demonstrates state management and data persistence between bot restarts.
+- Persists conversation history using SQLite database
+- Stores and retrieves user preferences
+- Tracks bot statistics
+- Demonstrates database schema management and migrations
+- **Files**: `Cargo.toml`, `src/main.rs`
+- **Commands**: `/save`, `/load`, `/history`, `/stats`, `/help`
+
 ## Usage
 
 Each project can be built and run independently. Navigate to the project directory and run:

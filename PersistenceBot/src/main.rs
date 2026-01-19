@@ -1,5 +1,5 @@
 use vector_sdk::nostr::{
-    Keys, Kind, UnwrappedGift, RelayPoolNotification, ToBech32, PublicKey
+    Keys, Kind, UnwrappedGift, RelayPoolNotification, ToBech32
 };
 use vector_sdk::VectorBot;
 use std::error::Error;
@@ -7,19 +7,22 @@ use rusqlite::{Connection, params, OptionalExtension};
 use chrono::{DateTime, Utc, Local};
 use anyhow::{Context, Result};
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 
 /// Database schema version
 const SCHEMA_VERSION: i32 = 1;
 
 /// Database connection wrapper
+#[derive(Clone)]
 struct Database {
-    conn: Connection,
+    conn: Arc<Mutex<Connection>>,
 }
 
 impl Database {
     /// Initialize or open the database
     fn new(db_path: &str) -> Result<Self> {
         let conn = Connection::open(db_path)?;
+        let conn = Arc::new(Mutex::new(conn));
 
         // Initialize database schema
         Self::initialize_schema(&conn)?;
@@ -28,7 +31,8 @@ impl Database {
     }
 
     /// Initialize database schema
-    fn initialize_schema(conn: &Connection) -> Result<()> {
+    fn initialize_schema(conn: &Arc<Mutex<Connection>>) -> Result<()> {
+        let conn = conn.lock().unwrap();
         // Create schema_version table
         conn.execute(
             "CREATE TABLE IF NOT EXISTS schema_version (
@@ -96,14 +100,15 @@ impl Database {
 
     /// Get or create a conversation
     fn get_or_create_conversation(&self, user_pubkey: &str, group_pubkey: Option<&str>) -> Result<i32> {
+        let conn = self.conn.lock().unwrap();
         let conversation_id: Option<i32> = if let Some(group_pubkey) = group_pubkey {
-            self.conn.query_row(
+            conn.query_row(
                 "SELECT id FROM conversations WHERE user_pubkey = ? AND group_pubkey = ?",
                 [user_pubkey, group_pubkey],
                 |row| row.get(0),
             ).optional()?
         } else {
-            self.conn.query_row(
+            conn.query_row(
                 "SELECT id FROM conversations WHERE user_pubkey = ? AND group_pubkey IS NULL",
                 [user_pubkey],
                 |row| row.get(0),
@@ -116,24 +121,26 @@ impl Database {
             let created_at = Utc::now().to_rfc3339();
             let group_pubkey_val = group_pubkey.unwrap_or("");
 
-            self.conn.execute(
+            conn.execute(
                 "INSERT INTO conversations (user_pubkey, group_pubkey, created_at) VALUES (?, ?, ?)",
                 params![user_pubkey, group_pubkey_val, created_at],
             )?;
 
-            self.conn.query_row(
+            let id: i32 = conn.query_row(
                 "SELECT last_insert_rowid()",
                 [],
                 |row| row.get(0),
-            )
+            )?;
+            Ok(id)
         }
     }
 
     /// Save a message to the database
     fn save_message(&self, conversation_id: i32, sender_pubkey: &str, content: &str, is_from_bot: bool) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
         let message_time = Utc::now().to_rfc3339();
 
-        self.conn.execute(
+        conn.execute(
             "INSERT INTO messages (conversation_id, sender_pubkey, content, message_time, is_from_bot) VALUES (?, ?, ?, ?, ?)",
             params![conversation_id, sender_pubkey, content, message_time, is_from_bot],
         )?;
@@ -143,7 +150,8 @@ impl Database {
 
     /// Get conversation history
     fn get_history(&self, conversation_id: i32, limit: i32) -> Result<Vec<(String, String, String, bool)>> {
-        let mut stmt = self.conn.prepare(
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
             "SELECT sender_pubkey, content, message_time, is_from_bot
              FROM messages
              WHERE conversation_id = ?
@@ -172,9 +180,10 @@ impl Database {
 
     /// Save user preference
     fn save_preference(&self, user_pubkey: &str, key: &str, value: &str) -> Result<()> {
+        let conn = self.conn.lock().unwrap();
         let updated_at = Utc::now().to_rfc3339();
 
-        self.conn.execute(
+        conn.execute(
             "INSERT OR REPLACE INTO user_preferences (user_pubkey, key, value, updated_at) VALUES (?, ?, ?, ?)",
             params![user_pubkey, key, value, updated_at],
         )?;
@@ -184,7 +193,8 @@ impl Database {
 
     /// Load user preference
     fn load_preference(&self, user_pubkey: &str, key: &str) -> Result<Option<String>> {
-        let value: Option<String> = self.conn.query_row(
+        let conn = self.conn.lock().unwrap();
+        let value: Option<String> = conn.query_row(
             "SELECT value FROM user_preferences WHERE user_pubkey = ? AND key = ?",
             params![user_pubkey, key],
             |row| row.get(0),
@@ -195,19 +205,20 @@ impl Database {
 
     /// Get bot statistics
     fn get_stats(&self) -> Result<(i32, i32, i32)> {
-        let total_conversations: i32 = self.conn.query_row(
+        let conn = self.conn.lock().unwrap();
+        let total_conversations: i32 = conn.query_row(
             "SELECT COUNT(*) FROM conversations",
             [],
             |row| row.get(0),
         )?;
 
-        let total_messages: i32 = self.conn.query_row(
+        let total_messages: i32 = conn.query_row(
             "SELECT COUNT(*) FROM messages",
             [],
             |row| row.get(0),
         )?;
 
-        let total_users: i32 = self.conn.query_row(
+        let total_users: i32 = conn.query_row(
             "SELECT COUNT(DISTINCT user_pubkey) FROM conversations",
             [],
             |row| row.get(0),
@@ -257,18 +268,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
                         Ok(UnwrappedGift { rumor, sender }) => {
                             if rumor.kind == Kind::PrivateDirectMessage {
                                 let content = rumor.content.trim().to_lowercase();
+                                let content_clone = content.clone();
                                 let sender_pubkey = sender.to_string();
 
                                 // Parse and handle commands
                                 let response = match content {
                                     cmd if cmd.starts_with("/save") => {
-                                        handle_save_command(&content, &sender_pubkey, &db_clone).await
+                                        handle_save_command(&content_clone, &sender_pubkey, &db_clone).await
                                     }
                                     cmd if cmd.starts_with("/load") => {
-                                        handle_load_command(&content, &sender_pubkey, &db_clone).await
+                                        handle_load_command(&content_clone, &sender_pubkey, &db_clone).await
                                     }
                                     cmd if cmd.starts_with("/history") => {
-                                        handle_history_command(&content, &sender_pubkey, &db_clone).await
+                                        handle_history_command(&content_clone, &sender_pubkey, &db_clone).await
                                     }
                                     cmd if cmd.starts_with("/stats") => {
                                         handle_stats_command(&db_clone).await

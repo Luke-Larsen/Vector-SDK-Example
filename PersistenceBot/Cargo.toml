@@ -8,7 +8,7 @@ vector_sdk = { path = "Vector-SDK" }
 tokio = { version = "1.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-rusqlite = { version = "0.30", features = ["bundled"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
 chrono = { version = "0.4", features = ["serde"] }
 log = "0.4"
 env_logger = "0.10"

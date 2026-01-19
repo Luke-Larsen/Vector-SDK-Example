@@ -44,61 +44,55 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Create a new VectorBot with default metadata
     let bot = VectorBot::quick(keys).await;
 
-    // Spawn a background task to process scheduled messages
-    let scheduled_messages_clone = scheduled_messages.clone();
-    let bot_clone = bot.clone();
-    tokio::spawn(async move {
-        loop {
-            // Check for messages to send
-            let now = Utc::now();
-            let mut messages_to_send = Vec::new();
+    // Process scheduled messages in the main thread instead of spawning
+    loop {
+        // Check for messages to send
+        let now = Utc::now();
+        let mut messages_to_send = Vec::new();
 
-            {
-                let mut messages = scheduled_messages_clone.lock().await;
-                messages.retain(|id, msg| {
-                    if msg.scheduled_time <= now {
-                        messages_to_send.push(msg.clone());
-                        false // Remove from map
-                    } else {
-                        true // Keep in map
-                    }
-                });
-            }
+        {
+            let mut messages = scheduled_messages.lock().await;
+            messages.retain(|_id, msg| {
+                if msg.scheduled_time <= now {
+                    messages_to_send.push(msg.clone());
+                    false // Remove from map
+                } else {
+                    true // Keep in map
+                }
+            });
+        }
 
-            // Send the messages
-            for msg in messages_to_send {
-                let chat = bot_clone.get_chat(msg.sender).await;
-                let _ = chat.send_private_message(&msg.message).await;
-                println!("Sent scheduled message to {:?}: {}", msg.sender, msg.message);
+        // Send the messages
+        for msg in messages_to_send {
+            let chat = bot.get_chat(msg.sender).await;
+            let _ = chat.send_private_message(&msg.message).await;
+            println!("Sent scheduled message to {:?}: {}", msg.sender, msg.message);
 
-                // Reschedule if recurring
-                if msg.is_recurring {
-                    if let Some(interval) = msg.recurrence_interval {
-                        let new_time = match interval.as_str() {
-                            "daily" => (msg.scheduled_time + chrono::Duration::days(1)).with_time(msg.scheduled_time.time()),
-                            "weekly" => (msg.scheduled_time + chrono::Duration::weeks(1)).with_time(msg.scheduled_time.time()),
-                            _ => None,
-                        };
+            // Reschedule if recurring
+            if msg.is_recurring {
+                if let Some(ref interval) = msg.recurrence_interval {
+                    let new_time = match interval.as_str() {
+                        "daily" => Utc.from_local_datetime(&((msg.scheduled_time + chrono::Duration::days(1)).date_naive().and_time(msg.scheduled_time.time()))).single().unwrap(),
+                        "weekly" => Utc.from_local_datetime(&((msg.scheduled_time + chrono::Duration::weeks(1)).date_naive().and_time(msg.scheduled_time.time()))).single().unwrap(),
+                        _ => continue,
+                    };
 
-                        if let Some(new_time) = new_time {
-                            let mut messages = scheduled_messages_clone.lock().await;
-                            messages.insert(msg.id.clone(), ScheduledMessage {
-                                id: msg.id,
-                                sender: msg.sender,
-                                message: msg.message,
-                                scheduled_time: new_time,
-                                is_recurring: true,
-                                recurrence_interval: msg.recurrence_interval,
-                            });
-                        }
-                    }
+                    let mut messages = scheduled_messages.lock().await;
+                    messages.insert(msg.id.clone(), ScheduledMessage {
+                        id: msg.id,
+                        sender: msg.sender,
+                        message: msg.message,
+                        scheduled_time: new_time,
+                        is_recurring: true,
+                        recurrence_interval: msg.recurrence_interval.clone(),
+                    });
                 }
             }
-
-            // Sleep for a short period before checking again
-            tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
         }
-    });
+
+        // Sleep for a short period before checking again
+        tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+    }
 
     // Set up notification handler for gift wrap events
     bot.client.handle_notifications(|notification| {
@@ -114,7 +108,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                 let content = rumor.content.trim().to_lowercase();
 
                                 // Parse and handle commands
-                                let response = match content {
+                                let response = match content.as_str() {
                                     cmd if cmd.starts_with("/schedule") => {
                                         handle_schedule_command(&content, sender, scheduled_messages_clone).await
                                     }
@@ -195,7 +189,7 @@ async fn handle_schedule_command(
     // Add to scheduled messages
     {
         let mut messages = scheduled_messages.lock().await;
-        messages.insert(id, scheduled_msg);
+        messages.insert(id.clone(), scheduled_msg);
     }
 
     format!("Message scheduled! ID: {}\nTime: {}\nMessage: {}", id, scheduled_time, message)
@@ -262,17 +256,17 @@ fn parse_time(time_str: &str) -> Option<DateTime<Utc>> {
     // Try parsing as HH:MM
     if let Ok(time) = chrono::NaiveTime::parse_from_str(time_str, "%H:%M") {
         let now = Local::now();
-        let today = now.date();
+        let today = now.date_naive();
         let datetime = today.and_time(time);
-        return Some(datetime.with_timezone(&Utc));
+        return Some(Utc.from_local_datetime(&datetime).single().unwrap());
     }
 
     // Try parsing as HH:MM AM/PM
     if let Ok(time) = chrono::NaiveTime::parse_from_str(time_str, "%I:%M %p") {
         let now = Local::now();
-        let today = now.date();
+        let today = now.date_naive();
         let datetime = today.and_time(time);
-        return Some(datetime.with_timezone(&Utc));
+        return Some(Utc.from_local_datetime(&datetime).single().unwrap());
     }
 
     None
